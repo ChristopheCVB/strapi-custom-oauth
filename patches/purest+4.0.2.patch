@@ -1,0 +1,23 @@
+diff --git a/node_modules/purest/config/providers.json b/node_modules/purest/config/providers.json
+index 8dd1dae..002a9d2 100644
+--- a/node_modules/purest/config/providers.json
++++ b/node_modules/purest/config/providers.json
+@@ -2784,5 +2784,18 @@
+         "authorization": "Bearer {auth}"
+       }
+     }
++  },
++  "trackmania": {
++    "default": {
++      "origin": "https://api.trackmania.com",
++      "path": "api/{path}",
++      "headers": {
++        "authorization": "Bearer {auth}"
++      }
++    },
++    "oauth": {
++      "origin": "https://api.trackmania.com",
++      "path": "oauth/{path}"
++    }
+   }
+ }

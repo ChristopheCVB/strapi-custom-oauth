@@ -1,0 +1,34 @@
+{
+  "name": "strapi-custom-oauth",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Strapi Custom OAuth/OpenID COnnect Provider",
+  "scripts": {
+    "develop": "strapi develop",
+    "start": "strapi start",
+    "build": "strapi build",
+    "strapi": "strapi",
+    "postinstall": "patch-package"
+  },
+  "devDependencies": {},
+  "dependencies": {
+    "@strapi/strapi": "4.6.1",
+    "@strapi/plugin-users-permissions": "4.6.1",
+    "better-sqlite3": "8.0.1",
+    "patch-package": "^6.5.1",
+    "postinstall-postinstall": "^2.1.0"
+  },
+  "author": {
+    "name": "Christophe Carvalho Vilas-Boas",
+    "email": "christophe.carvalhovilasboas+grindingstats@gmail.com",
+    "url": "https://www.christophecvb.com/"
+  },
+  "strapi": {
+    "uuid": "7ad4d041-c13c-437d-ac6c-314a70a5aa13"
+  },
+  "engines": {
+    "node": ">=14.19.1 <=18.x.x",
+    "npm": ">=6.0.0"
+  },
+  "license": "MIT"
+}

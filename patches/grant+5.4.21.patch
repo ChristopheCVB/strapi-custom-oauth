@@ -1,0 +1,29 @@
+diff --git a/node_modules/grant/config/oauth.json b/node_modules/grant/config/oauth.json
+index da4e41b..0afae6c 100644
+--- a/node_modules/grant/config/oauth.json
++++ b/node_modules/grant/config/oauth.json
+@@ -1180,5 +1180,11 @@
+     "access_url": "https://zoom.us/oauth/token",
+     "oauth": 2,
+     "scope_delimiter": " "
++  },
++  "trackmania": {
++    "authorize_url": "https://api.trackmania.com/oauth/authorize",
++    "access_url": "https://api.trackmania.com/api/access_token",
++    "oauth": 2,
++    "scope_delimiter": " "
+   }
+ }
+diff --git a/node_modules/grant/config/profile.json b/node_modules/grant/config/profile.json
+index 365ba91..4e9bae6 100644
+--- a/node_modules/grant/config/profile.json
++++ b/node_modules/grant/config/profile.json
+@@ -634,5 +634,8 @@
+   },
+   "zoom": {
+     "profile_url": "https://api.zoom.us/v2/users/me"
++  },
++  "trackmania": {
++    "profile_url": "https://api.trackmania.com/api/user"
+   }
+ }
