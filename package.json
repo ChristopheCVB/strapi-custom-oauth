@@ -2,7 +2,7 @@
   "name": "strapi-custom-oauth",
   "private": true,
   "version": "0.1.0",
-  "description": "Strapi Custom OAuth/OpenID COnnect Provider",
+  "description": "Strapi Custom OAuth/OpenID Connect Provider",
   "scripts": {
     "develop": "strapi develop",
     "start": "strapi start",
