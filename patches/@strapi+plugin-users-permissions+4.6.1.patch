@@ -5,7 +5,7 @@ index db31e84..501cb7a 100644
 @@ -108,6 +108,16 @@ export const ProvidersPage = () => {
      return has(providerToEdit, 'subdomain');
    }, [providers, providerToEditName]);
- 
+
 +  const isProviderWithBasicHeader = useMemo(() => {
 +    if (!providerToEditName) {
 +      return false;
@@ -22,7 +22,7 @@ index db31e84..501cb7a 100644
 @@ -122,8 +132,12 @@ export const ProvidersPage = () => {
        return forms.providersWithSubdomain;
      }
- 
+
 +    if (isProviderWithBasicHeader) {
 +      return forms.providersWithBasicHeader;
 +    }
@@ -30,7 +30,7 @@ index db31e84..501cb7a 100644
      return forms.providers;
 -  }, [providerToEditName, isProviderWithSubdomain]);
 +  }, [providerToEditName, isProviderWithSubdomain, isProviderWithBasicHeader]);
- 
+
    const handleToggleModal = () => {
      setIsOpen((prev) => !prev);
 diff --git a/node_modules/@strapi/plugin-users-permissions/admin/src/pages/Providers/utils/createProvidersArray.js b/node_modules/@strapi/plugin-users-permissions/admin/src/pages/Providers/utils/createProvidersArray.js
@@ -44,7 +44,7 @@ index 547e82d..7c2dbc4 100644
 -      const { icon: iconName, enabled, subdomain } = data[current];
 +      const { icon: iconName, enabled, subdomain, basicHeader, openPlanetSecret } = data[current];
        const icon = iconName === 'envelope' ? ['fas', 'envelope'] : ['fab', iconName];
- 
+
        if (subdomain !== undefined) {
          acc.push({ name: current, icon, enabled, subdomain });
 +      } else if (basicHeader !== undefined) {
@@ -187,7 +187,7 @@ index 71fe4c5..f5713b3 100644
 +    }),
 +  },
  };
- 
+
  export default forms;
 diff --git a/node_modules/@strapi/plugin-users-permissions/server/bootstrap/grant-config.js b/node_modules/@strapi/plugin-users-permissions/server/bootstrap/grant-config.js
 index 31c612c..45d93c5 100644
@@ -209,10 +209,10 @@ index 31c612c..45d93c5 100644
 +  },
  });
 diff --git a/node_modules/@strapi/plugin-users-permissions/server/services/providers-registry.js b/node_modules/@strapi/plugin-users-permissions/server/services/providers-registry.js
-index 6743f57..21f1f47 100644
+index 6743f57..59c589c 100644
 --- a/node_modules/@strapi/plugin-users-permissions/server/services/providers-registry.js
 +++ b/node_modules/@strapi/plugin-users-permissions/server/services/providers-registry.js
-@@ -331,6 +331,17 @@ const getInitialProviders = ({ purest }) => ({
+@@ -331,6 +331,16 @@ const getInitialProviders = ({ purest }) => ({
          };
        });
    },
@@ -223,60 +223,9 @@ index 6743f57..21f1f47 100644
 +
 +    return {
 +      username: userBody.displayName,
-+      email: userBody.displayName + '@grinding-stats.openplanet.dev',
-+      tmId: userBody.accountId,
++      email: userBody.displayName + '@trackmania.com', // dummy email as Trackmania does not provide user email
 +    };
 +  },
  });
- 
+
  module.exports = () => {
-diff --git a/node_modules/@strapi/plugin-users-permissions/server/services/providers.js b/node_modules/@strapi/plugin-users-permissions/server/services/providers.js
-index 1907f88..b23da1e 100644
---- a/node_modules/@strapi/plugin-users-permissions/server/services/providers.js
-+++ b/node_modules/@strapi/plugin-users-permissions/server/services/providers.js
-@@ -60,9 +60,17 @@ module.exports = ({ strapi }) => {
-       throw new Error('Email was not available.');
-     }
- 
--    const users = await strapi.query('plugin::users-permissions.user').findMany({
--      where: { email },
--    });
-+    let users
-+    if (provider === 'trackmania') {
-+      users = await strapi.query('plugin::users-permissions.user').findMany({
-+        where: { tmId: profile.tmId },
-+      });
-+    }
-+    else {
-+      users = await strapi.query('plugin::users-permissions.user').findMany({
-+        where: { email },
-+      });
-+    }
- 
-     const advancedSettings = await strapi
-       .store({ type: 'plugin', name: 'users-permissions', key: 'advanced' })
-@@ -75,6 +83,24 @@ module.exports = ({ strapi }) => {
-     }
- 
-     if (!_.isEmpty(user)) {
-+      if (provider === 'trackmania') {
-+        // Retrieve default role.
-+        const defaultRole = await strapi
-+          .query('plugin::users-permissions.role')
-+          .findOne({ where: { type: advancedSettings.default_role } });
-+
-+        const updateUser = {
-+          ...profile,
-+          email, // overwrite with lowercased email
-+          provider,
-+          role: defaultRole.id,
-+          confirmed: true,
-+        };
-+
-+        const updatedUser = await strapi.entityService.update('plugin::users-permissions.user', user.id, { data: updateUser });
-+
-+        return updatedUser;
-+      }
-       return user;
-     }
- 
